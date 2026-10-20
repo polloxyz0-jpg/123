@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}html{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>YO PIDO+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Nunito+Sans:wght@400;600;700;800&family=Rubik:wght@500;600;700&display=swap">
+<style>
+/* Concepto: una pensión de barrio con ticket de cocina. Fondo cálido, naranja de marca, y la comanda
+   como pieza central en tipografía de ticket (mono) sobre azul pizarra. */
+:root{
+  --bg:#FBF6EF; --surface:#FFFDF9; --sunken:#F3EADF; --ink:#2B2118; --muted:#6A5C4E; --line:#E6D8C7;
+  --brand:#E67E22; --on-brand:#1F1710; --brand-text:#A94F05; --brand-soft:#FCE7D1;
+  --ok:#1F6B45; --ok-soft:#DDF1E5; --warn:#7D5200; --warn-soft:#FBEBC6; --bad:#B42318; --bad-soft:#FBE3E0;
+  --ticket:#1F2A37; --ticket-ink:#FDFCFB; --ticket-muted:#AEBBC8; --ticket-line:#3C4B5B;
+  --font-display:'Rubik',Arial,sans-serif; --font-body:'Nunito Sans',Arial,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#17120D; --surface:#211A13; --sunken:#2A2118; --ink:#F6ECE0; --muted:#BDAE9D; --line:#3C3025;
+    --brand:#F08A2E; --on-brand:#1F1710; --brand-text:#F6A95E; --brand-soft:#3A2614;
+    --ok:#6BCB95; --ok-soft:#173326; --warn:#F2C25B; --warn-soft:#3A2D0E; --bad:#FF8A80; --bad-soft:#3F1A17;
+    --ticket:#0F1720; --ticket-ink:#FDFCFB; --ticket-muted:#9FB0C0; --ticket-line:#2E3B49;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17120D; --surface:#211A13; --sunken:#2A2118; --ink:#F6ECE0; --muted:#BDAE9D; --line:#3C3025;
+  --brand:#F08A2E; --on-brand:#1F1710; --brand-text:#F6A95E; --brand-soft:#3A2614;
+  --ok:#6BCB95; --ok-soft:#173326; --warn:#F2C25B; --warn-soft:#3A2D0E; --bad:#FF8A80; --bad-soft:#3F1A17;
+  --ticket:#0F1720; --ticket-ink:#FDFCFB; --ticket-muted:#9FB0C0; --ticket-line:#2E3B49;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 var(--font-body);-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.15;font-weight:600;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:100%;max-width:1040px;margin-inline:auto;padding-inline:16px}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+
+/* Cabecera */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 20px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:var(--brand);color:var(--on-brand);font:700 20px/1 var(--font-display)}
+.logo sup{font-size:.6em;line-height:1;align-self:flex-start;margin-top:9px;margin-left:1px}
+.brand-name{font:700 22px/1 var(--font-display);letter-spacing:.01em}
+.brand-name span{color:var(--brand-text)}
+.tabs{display:flex;gap:2px}
+.tabs a{position:relative;padding:10px 12px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;color:var(--muted)}
+.tabs a[aria-current="page"]{color:var(--brand-text);background:var(--brand-soft)}
+.dot{position:absolute;top:6px;right:3px;width:10px;height:10px;border-radius:50%;background:var(--brand)}
+body[data-view="cocina"] .tabs,body[data-view="qr"] .tabs{display:none}
+.banner{background:var(--bad-soft);color:var(--bad);font-weight:700;text-align:center;padding:10px 16px}
+
+/* Botones y campos */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:12px;border:1.5px solid transparent;font-weight:800;font-size:17px;cursor:pointer;text-decoration:none}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary{background:var(--brand);color:var(--on-brand)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{background:var(--sunken)}
+.btn-block{width:100%}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label,.lab{font-weight:700;font-size:16px}
+input[type=text],input[type=number],input[type=password],select,textarea{width:100%;min-height:48px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface)}
+textarea{min-height:88px;resize:vertical}
+.hint{color:var(--muted);font-size:15px}
+.note{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px 14px;font-size:15px;font-weight:600}
+.msg{border-radius:12px;padding:12px 14px;font-weight:700}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.msg.bad{background:var(--bad-soft);color:var(--bad)}
+.eyebrow{font:800 13px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--brand-text)}
+
+/* Inicio */
+.view{padding-block:28px 56px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center;padding-block:12px 28px}
+.hero h1{font-size:clamp(32px,6vw,52px)}
+.hero p.lead{margin-top:14px;font-size:20px;color:var(--muted);max-width:34em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:24px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--brand-soft);color:var(--brand-text);font-weight:800;font-size:15px}
+.logo-xl{width:168px;height:168px;border-radius:40px;font-size:76px}
+.logo-xl sup{margin-top:34px}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.steps b{font-family:var(--font-display);font-size:20px}
+.steps .n{font:600 15px var(--font-mono);color:var(--brand-text)}
+.steps span.d{color:var(--muted);font-size:16px}
+@media (max-width:640px){.hero{grid-template-columns:1fr}.logo-xl{width:96px;height:96px;border-radius:26px;font-size:44px}.logo-xl sup{margin-top:20px}}
+
+/* Armar pedido */
+.grid-pedido{display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+@media (min-width:880px){.grid-pedido{grid-template-columns:minmax(0,1fr) 380px;align-items:start}.col-ticket{position:sticky;top:96px}.only-mobile{display:none!important}}
+@media (max-width:879px){.only-desktop{display:none!important}.view-pedido{padding-bottom:112px}}
+.h1{font-size:clamp(28px,5vw,40px)}
+.col-form{display:flex;flex-direction:column;gap:22px;min-width:0}
+fieldset.block,div.block{margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:12px;min-width:0}
+fieldset.block legend,.block>.lab{padding:0;font:600 21px/1.2 var(--font-display);margin-bottom:2px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.choice{position:relative;display:flex;flex-direction:column;gap:2px;padding:14px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer;min-width:0}
+.choice input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.choice:focus-within{outline:3px solid var(--brand);outline-offset:2px}
+.choice.is-sel{border-color:var(--brand);background:var(--brand-soft)}
+.choice.is-off{opacity:.55;cursor:not-allowed}
+.c-name{font-weight:800}
+.c-sub{color:var(--muted);font-size:15px}
+.c-price{font:600 15px var(--font-mono);color:var(--brand-text);margin-top:4px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+#por-list,#beb-list{display:flex;flex-direction:column;gap:8px}
+.r-txt{display:flex;flex-direction:column;min-width:0}
+.r-txt b{font-weight:800}
+.r-hint{color:var(--muted);font-size:15px}
+.step{display:flex;align-items:center;gap:6px;flex:none}
+.s-btn{width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--sunken);font-size:24px;font-weight:700;line-height:1;cursor:pointer}
+.s-btn:hover:not(:disabled){background:var(--brand-soft);border-color:var(--brand)}
+.s-btn:disabled{opacity:.4;cursor:not-allowed}
+.s-val{min-width:34px;text-align:center;font:600 22px var(--font-mono)}
+
+/* Ticket / comanda digital */
+.ticket{background:var(--ticket);color:var(--ticket-ink);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.ticket h2{font-size:26px}
+.t-sub{color:var(--ticket-muted);font-size:15px}
+.t-meta{display:flex;flex-wrap:wrap;gap:8px;font:600 14px var(--font-mono);color:var(--ticket-muted)}
+.t-meta span{border:1px dashed var(--ticket-line);border-radius:8px;padding:4px 8px}
+.t-lines{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--ticket-line);padding-top:14px}
+.t-row{display:flex;justify-content:space-between;gap:12px;font:500 16px/1.35 var(--font-mono)}
+.t-row b{font-weight:600}
+.t-row.is-dim{color:var(--ticket-muted)}
+.t-row span:last-child,.t-row b:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.t-total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:1px dashed var(--ticket-line);padding-top:14px}
+.t-total span{font:600 14px var(--font-mono);letter-spacing:.08em;color:var(--ticket-muted)}
+.t-total b{font:600 38px/1 var(--font-mono);color:var(--brand);font-variant-numeric:tabular-nums}
+.t-foot{text-align:center;color:var(--ticket-muted);font-size:14px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:space-between;gap:14px}
+.bar small{display:block;color:var(--muted);font-size:14px;line-height:1.1}
+.bar b{font:600 26px/1.1 var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(10,8,6,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.m-card{background:var(--bg);border-radius:20px;padding:20px;max-width:460px;width:100%;max-height:calc(100% - 16px);overflow:auto;display:flex;flex-direction:column;gap:14px}
+.m-act{display:flex;flex-direction:column;gap:10px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;max-width:calc(100% - 32px);text-align:center}
+.toast.bad{background:var(--bad);color:#fff}
+
+/* Mi pedido */
+.mp{display:flex;flex-direction:column;gap:20px;max-width:560px}
+.mp-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.mp-num{font:600 56px/1 var(--font-mono)}
+.mp-donde{font-weight:800;color:var(--brand-text)}
+.pasos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.pasos li{display:flex;gap:14px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--muted)}
+.pasos li div{display:flex;flex-direction:column}
+.pasos li b{font-weight:800}
+.p-mark{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:600 16px var(--font-mono);background:var(--sunken)}
+.pasos li.done{color:var(--ok)}
+.pasos li.done .p-mark{background:var(--ok-soft)}
+.pasos li.now{color:var(--ink);border-color:var(--brand);background:var(--brand-soft)}
+.pasos li.now .p-mark{background:var(--brand);color:var(--on-brand)}
+.empty{display:flex;flex-direction:column;gap:12px;align-items:flex-start;max-width:520px}
+.empty p{color:var(--muted)}
+
+/* Cocina */
+.k-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.k-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.k-tabs{display:flex;gap:8px;margin-bottom:18px}
+.k-tabs button{min-height:44px;padding:0 16px;border-radius:12px;border:1.5px solid var(--line);background:transparent;font-weight:800;cursor:pointer}
+.k-tabs button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.k-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:1000px){.k-cols{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}}
+.k-h{display:flex;align-items:center;justify-content:space-between;font-size:20px;padding-bottom:10px;border-bottom:3px solid var(--line);margin-bottom:12px}
+.k-col[data-est="nuevo"] .k-h{border-color:var(--brand)}
+.k-col[data-est="preparando"] .k-h{border-color:var(--warn)}
+.k-col[data-est="listo"] .k-h{border-color:var(--ok)}
+.k-count{font:600 16px var(--font-mono);background:var(--sunken);border-radius:999px;padding:2px 10px}
+.k-list{display:flex;flex-direction:column;gap:12px}
+.k-empty{color:var(--muted);padding:12px 2px}
+.k-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.k-card.is-new{border-color:var(--brand);background:var(--brand-soft)}
+.k-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.k-num{font:600 26px/1 var(--font-mono)}
+.k-where{font-weight:800;color:var(--brand-text)}
+.k-time{font:500 14px var(--font-mono);color:var(--muted)}
+.k-time.late{color:var(--warn);font-weight:600}
+.k-base{font-size:24px}
+.k-items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;font:500 17px var(--font-mono)}
+.k-items li{display:flex;justify-content:space-between;gap:8px}
+.k-items .none{color:var(--bad);font-weight:600}
+.k-note{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 10px;font-weight:700}
+.k-name{color:var(--muted);font-size:15px}
+.new-tag{font:800 12px var(--font-body);letter-spacing:.08em;background:var(--brand);color:var(--on-brand);border-radius:6px;padding:3px 7px}
+.gate{max-width:360px;display:flex;flex-direction:column;gap:12px}
+.menu-grupo{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;max-width:560px}
+.menu-grupo h3{font-size:20px}
+.sw{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;cursor:pointer;min-height:52px}
+.sw input{width:22px;height:22px;accent-color:var(--brand)}
+.sw span{flex:1;font-weight:700}
+.sw em{font-style:normal;font-size:15px;color:var(--ok);font-weight:700}
+.sw.off em{color:var(--bad)}
+
+/* QR */
+.qr-form{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;max-width:640px;margin-block:16px}
+@media (max-width:560px){.qr-form{grid-template-columns:1fr}}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:20px}
+.qr-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;min-width:0}
+.qr-box{background:#fff;padding:12px;border-radius:12px;line-height:0}
+.qr-card h3{font-size:24px}
+.qr-slogan{color:var(--muted);font-size:15px}
+.qr-link{font:500 12px var(--font-mono);color:var(--muted);word-break:break-all}
+@media print{
+  .top,.no-print,.foot,.toast{display:none!important}
+  body{background:#fff;color:#000}
+  .qr-card{break-inside:avoid;border:1px solid #000;background:#fff;color:#000}
+  .qr-slogan,.qr-link{color:#000}
+}
+.foot{padding-block:24px 40px;color:var(--muted);font-size:15px;display:flex;flex-wrap:wrap;gap:6px 16px}
+@media (prefers-reduced-motion:no-preference){.choice,.btn,.s-btn{transition:background-color .15s,border-color .15s}}
+
+/* Cuenta y pago */
+.link{background:none;border:0;padding:0;color:var(--brand-text);font-weight:800;text-decoration:underline;cursor:pointer;font-size:inherit}
+.user{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+#user-name{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth{max-width:440px;display:flex;flex-direction:column;gap:16px}
+.auth form{display:flex;flex-direction:column;gap:14px}
+.pago-box{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.pago-txt{flex:1;min-width:200px;display:flex;flex-direction:column;gap:10px}
+.pago-txt ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.pago-act{display:flex;flex-wrap:wrap;gap:10px}
+.k-pago{font-weight:800;color:var(--warn)}
+.k-pago.ok{color:var(--ok)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#inicio" data-nav="inicio" aria-label="YO PIDO+, ir al inicio">
+      <span class="logo" aria-hidden="true">YP<sup>+</sup></span>
+      <span class="brand-name">YO PIDO<span>+</span></span>
+    </a>
+    <nav class="tabs" aria-label="Secciones">
+      <a href="#inicio" data-nav="inicio">Inicio</a>
+      <a href="#pedido" data-nav="pedido">Armar pedido</a>
+      <a href="#mipedido" data-nav="mipedido">Mi pedido<i class="dot" id="dot" hidden><span class="sr">en curso</span></i></a>
+    </nav>
+    <div class="user" id="user" hidden><span id="user-name"></span><button type="button" class="link" data-act="salir">Salir</button></div>
+    <div class="user" id="user-guest"><button type="button" class="link" data-act="ir-cuenta" data-modo="entrar">Ingresar</button></div>
+  </div>
+  <div id="offline" class="banner" role="alert" hidden>Sin conexión. Tu pedido no se enviará hasta que vuelva internet.</div>
+</header>
+
+<main>
+  <!-- INICIO -->
+  <section id="v-inicio" class="view" hidden>
+    <div class="wrap">
+      <div class="hero">
+        <div>
+          <p class="eyebrow" id="h-negocio">Pensión</p>
+          <h1>Bienvenido a YO PIDO+</h1>
+          <p class="lead">Arma tu plato porción por porción. Ves el precio al instante y la cocina recibe tu pedido exacto, sin gritos ni notas en papel.</p>
+          <div class="hero-cta">
+            <div id="cta-guest" style="display:flex;flex-wrap:wrap;gap:12px"><button type="button" class="btn btn-primary" data-act="ir-cuenta" data-modo="entrar">Ingresar con mi cuenta</button><button type="button" class="btn btn-ghost" data-act="ir-cuenta" data-modo="crear">Crear cuenta</button></div>
+            <button type="button" class="btn btn-primary" id="cta-user" data-act="ir-pedido" hidden>Armar mi plato</button>
+            <span class="chip" id="h-mesa" hidden></span>
+          </div>
+        </div>
+        <div class="logo logo-xl" aria-hidden="true">YP<sup>+</sup></div>
+      </div>
+      <h2 class="sr">Cómo funciona</h2>
+      <ol class="steps">
+        <li><span class="n">PASO 1</span><b>Escanea el QR e ingresa</b><span class="d">Se abre esta página en tu celular. Ingresa con tu cuenta o crea una en un minuto.</span></li>
+        <li><span class="n">PASO 2</span><b>Arma tu plato</b><span class="d">Elige tu plato y ajusta arroz, papas fritas, ensalada y presas.</span></li>
+        <li><span class="n">PASO 3</span><b>Paga y espera</b><span class="d">Paga con QR o en efectivo. La comanda llega a la cocina y ves en qué paso va tu pedido.</span></li>
+      </ol>
+      <p class="note" id="demo-note" style="margin-top:20px" hidden></p>
+    </div>
+  </section>
+
+  <!-- ARMAR PEDIDO -->
+  <section id="v-pedido" class="view view-pedido" hidden>
+    <div class="wrap grid-pedido">
+      <div class="col-form">
+        <div>
+          <h1 class="h1">Arma tu plato</h1>
+          <p class="hint" id="lead-precios" style="margin-top:8px"></p>
+        </div>
+
+        <fieldset class="block">
+          <legend>1. ¿Dónde comes?</legend>
+          <div class="seg" role="radiogroup" aria-label="Modalidad">
+            <label class="choice" id="m-mesa"><input type="radio" name="modalidad" value="mesa"><span class="c-name">En mesa</span><span class="c-sub">Te lo llevamos a tu mesa</span></label>
+            <label class="choice" id="m-llevar"><input type="radio" name="modalidad" value="llevar"><span class="c-name">Para llevar</span><span class="c-sub">En envase térmico</span></label>
+          </div>
+          <div class="fields">
+            <div class="field" id="f-mesa"><label for="mesa">Número de mesa</label><select id="mesa"></select></div>
+            <div class="field"><label for="nombre" id="l-nombre">Tu nombre (opcional)</label><input id="nombre" type="text" maxlength="30" autocomplete="given-name"></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="block">
+          <legend>2. Elige tu plato</legend>
+          <div class="choices" id="base-list" role="radiogroup" aria-label="Plato"></div>
+        </fieldset>
+
+        <fieldset class="block">
+          <legend>3. Ajusta tus porciones</legend>
+          <p class="hint" id="hint-porciones"></p>
+          <div id="por-list"></div>
+        </fieldset>
+
+        <fieldset class="block">
+          <legend>4. Bebidas (opcional)</legend>
+          <div id="beb-list"></div>
+        </fieldset>
+
+        <div class="block">
+          <label class="lab" for="nota">5. Observaciones (opcional)</label>
+          <textarea id="nota" maxlength="140" placeholder="Ejemplo: sin picante, poca sal"></textarea>
+        </div>
+
+        <p class="msg bad" id="form-error" role="alert" hidden></p>
+      </div>
+
+      <aside class="col-ticket" aria-label="Tu comanda">
+        <div id="ticket"></div>
+      </aside>
+    </div>
+
+    <div class="bar only-mobile">
+      <div><small>Total estimado</small><b id="bar-total">0.00 Bs.</b></div>
+      <button type="button" class="btn btn-primary" data-act="confirmar">Confirmar mi plato</button>
+    </div>
+  </section>
+
+  <!-- CUENTA -->
+  <section id="v-cuenta" class="view" hidden>
+    <div class="wrap"><div class="auth">
+      <h1 class="h1" id="auth-titulo">Ingresar</h1>
+      <p class="hint" id="auth-sub"></p>
+      <div class="k-tabs" role="group" aria-label="Tipo de acceso">
+        <button type="button" data-authtab="entrar" aria-pressed="true">Ingresar</button>
+        <button type="button" data-authtab="crear" aria-pressed="false">Crear cuenta</button>
+      </div>
+      <form id="form-auth" novalidate>
+        <div class="field" id="a-nombre-f" hidden><label for="a-nombre">Tu nombre</label><input id="a-nombre" type="text" autocomplete="name" maxlength="40"></div>
+        <div class="field"><label for="a-email">Correo electrónico</label><input id="a-email" type="text" inputmode="email" autocomplete="email" autocapitalize="off"></div>
+        <div class="field"><label for="a-pass">Contraseña</label><input id="a-pass" type="password" autocomplete="current-password"></div>
+        <p class="msg bad" id="a-error" role="alert" hidden></p>
+        <button class="btn btn-primary btn-block" id="a-submit" type="submit">Ingresar</button>
+      </form>
+      <p class="hint"><span id="a-cambio-txt">¿No tienes cuenta?</span> <button type="button" class="link" id="a-cambio" data-act="auth-cambiar">Crear cuenta</button></p>
+    </div></div>
+  </section>
+
+  <!-- PAGO -->
+  <section id="v-pago" class="view" hidden>
+    <div class="wrap grid-pedido">
+      <div class="col-form">
+        <div>
+          <h1 class="h1">Pagar tu pedido</h1>
+          <p class="hint" id="pago-sub" style="margin-top:8px"></p>
+        </div>
+        <fieldset class="block">
+          <legend>Elige cómo pagar</legend>
+          <div class="seg" role="radiogroup" aria-label="Forma de pago">
+            <label class="choice" id="p-qr"><input type="radio" name="pago" value="qr"><span class="c-name">Pagar con QR</span><span class="c-sub">Desde la app de tu banco</span></label>
+            <label class="choice" id="p-efectivo"><input type="radio" name="pago" value="efectivo"><span class="c-name">Efectivo</span><span class="c-sub">Pagas al recibir tu plato</span></label>
+          </div>
+        </fieldset>
+        <div id="pago-aviso"></div>
+        <div id="pago-detalle"></div>
+        <div class="pago-act">
+          <button type="button" class="btn btn-primary" id="btn-enviar" data-act="enviar">Enviar a cocina</button>
+          <button type="button" class="btn btn-ghost" data-act="volver-editar">Volver a editar mi plato</button>
+        </div>
+      </div>
+      <aside class="col-ticket" aria-label="Tu comanda"><div id="pago-ticket"></div></aside>
+    </div>
+  </section>
+
+  <!-- MI PEDIDO -->
+  <section id="v-mipedido" class="view" hidden>
+    <div class="wrap"><div class="mp" id="mp"></div></div>
+  </section>
+
+  <!-- QR -->
+  <section id="v-qr" class="view" hidden>
+    <div class="wrap">
+      <h1 class="h1">Códigos QR por mesa</h1>
+      <p class="hint" style="margin-top:8px">Cada QR abre esta página con la mesa ya elegida. Para imprimirlos usa Ctrl+P (o Compartir > Imprimir en el celular).</p>
+      <div class="qr-form no-print">
+        <div class="field"><label for="qr-url">Dirección donde publicaste la página</label><input id="qr-url" type="text" inputmode="url" autocomplete="off"></div>
+        <div class="field"><label for="qr-n">Cantidad de mesas</label><input id="qr-n" type="number" min="1" max="60" value="4"></div>
+      </div>
+      <div class="qr-grid" id="qr-grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span id="f-negocio"></span>
+  <span class="no-print"><a href="cocina.html">Cocina</a> · <a href="#qr" data-nav="qr">Códigos QR</a></span>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+window.YP_CONFIG = {
+  negocio: 'Pensión Doña Celia · Calle Encañada, Cochabamba',
+  mesas: 4,
+  pinCocina: '',
+  firebase: null,
+  pagoQR: '',
+
+  bases: [
+    { id: 'pollo',     nombre: 'Pollo broaster', detalle: 'Presa de pollo broaster', precio: 15 },
+    { id: 'chuleta',   nombre: 'Chuleta',        detalle: 'Chuleta de cerdo',        precio: 15 },
+    { id: 'milanesa',  nombre: 'Milanesa',       detalle: 'Milanesa de res',         precio: 13 },
+    { id: 'asado',     nombre: 'Asado',          detalle: 'Asado',                   precio: 15 },
+    { id: 'silpancho', nombre: 'Silpancho',      detalle: 'Con huevos estrellados a elección', precio: 10,
+      huevos: { max: 4, incluidos: 1, precio: 0 } }
+  ],
+
+  porciones: [
+    { id: 'arroz',    nombre: 'Arroz',        max: 4, precio: 3 },
+    { id: 'papas',    nombre: 'Papas fritas', max: 4, precio: 3 },
+    { id: 'ensalada', nombre: 'Ensalada',     max: 4, precio: 3 },
+    { id: 'presas',   nombre: 'Presas',       max: 3, precio: 6 }
+  ],
+
+  bebidas: [
+    { id: 'mini',     nombre: 'Mini personal',    precio: 2.5 },
+    { id: 'hervido',  nombre: 'Refresco hervido', precio: 2.5 },
+    { id: 'agua',     nombre: 'Agua',             precio: 1 }
+  ]
+};
+</script>
+<script>
+(function(){
+'use strict';
+
+const CONFIG = window.YP_CONFIG;
+
+/* ---------- utilidades ---------- */
+const $  = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => Number(n || 0).toFixed(2);
+const pad = n => String(n || 0).padStart(3, '0');
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const hoy = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const hora = ms => new Date(ms).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
+
+const mem = (window.__ypMem = window.__ypMem || {});
+function lsGet(k, def){ try { const v = localStorage.getItem(k); if (v != null) return JSON.parse(v); } catch(e){} return (k in mem) ? mem[k] : def; }
+function lsSet(k, v){ mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function lsDel(k){ delete mem[k]; try { localStorage.removeItem(k); } catch(e){} }
+function ssGet(k){ try { return sessionStorage.getItem(k); } catch(e){ return mem['s_' + k] || null; } }
+function ssSet(k, v){ mem['s_' + k] = v; try { sessionStorage.setItem(k, v); } catch(e){} }
+
+/* =====================================================================
+   BASE DE DATOS
+   ===================================================================== */
+function crearDemo(){
+  const subsP = [], subsM = [];
+  const getP = () => lsGet('yp_pedidos', {});
+  const getM = () => lsGet('yp_menu', {});
+  const fireP = () => subsP.slice().forEach(f => f());
+  const fireM = () => subsM.slice().forEach(f => f());
+  const yo = Math.random().toString(36).slice(2);
+  let canal = null;
+  try { canal = new BroadcastChannel('yopido'); } catch(e){}
+  const avisar = k => {
+    try { window.dispatchEvent(new CustomEvent('yp-sync', { detail: { k: k, yo: yo } })); } catch(e){}
+    try { if (canal) canal.postMessage({ k: k, yo: yo }); } catch(e){}
+  };
+  const alRecibir = (k, de) => {
+    if (de === yo) return;
+    if (k === 'yp_pedidos') fireP();
+    if (k === 'yp_menu') fireM();
+  };
+  window.addEventListener('storage', e => alRecibir(e.key, null));
+  window.addEventListener('yp-sync', e => alRecibir(e.detail && e.detail.k, e.detail && e.detail.yo));
+  if (canal) canal.onmessage = e => alRecibir(e.data && e.data.k, e.data && e.data.yo);
+  return {
+    mode: 'demo',
+    enviar(p){
+      const c = lsGet('yp_cont', {});
+      c[p.fecha] = (c[p.fecha] || 0) + 1;
+      lsSet('yp_cont', c);
+      p.numero = c[p.fecha];
+      p.id = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      const all = getP(); all[p.id] = p; lsSet('yp_pedidos', all); fireP(); avisar('yp_pedidos');
+      return Promise.resolve(p);
+    },
+    pedidos(fecha, cb){
+      const f = () => { const all = getP(), out = {}; for (const k in all) if (all[k].fecha === fecha) out[k] = all[k]; cb(out); };
+      subsP.push(f); f();
+    },
+    pedido(id, cb){
+      const f = () => cb(getP()[id] || null);
+      subsP.push(f); f();
+      return () => { const i = subsP.indexOf(f); if (i > -1) subsP.splice(i, 1); };
+    },
+    estado(id, estado){
+      const all = getP();
+      if (all[id]) { all[id].estado = estado; all[id]['t_' + estado] = Date.now(); lsSet('yp_pedidos', all); fireP(); avisar('yp_pedidos'); }
+      return Promise.resolve();
+    },
+    pagar(id){
+      const all = getP();
+      if (all[id]) { all[id].pagado = true; all[id].t_pagado = Date.now(); lsSet('yp_pedidos', all); fireP(); avisar('yp_pedidos'); }
+      return Promise.resolve();
+    },
+    auth: {
+      async registrar(nombre, email, pass){
+        const us = lsGet('yp_users', {});
+        if (us[email]) throw { code: 'email-en-uso' };
+        const salt = Math.random().toString(36).slice(2);
+        us[email] = { uid: 'u' + Date.now().toString(36), nombre: nombre, email: email, salt: salt, hash: await hashPass(pass, salt) };
+        lsSet('yp_users', us);
+        const u = { uid: us[email].uid, nombre: nombre, email: email };
+        lsSet('yp_sesion', u);
+        return u;
+      },
+      async entrar(email, pass){
+        const us = lsGet('yp_users', {}), r = us[email];
+        if (!r || r.hash !== await hashPass(pass, r.salt)) throw { code: 'credenciales' };
+        const u = { uid: r.uid, nombre: r.nombre, email: email };
+        lsSet('yp_sesion', u);
+        return u;
+      },
+      salir(){ lsDel('yp_sesion'); return Promise.resolve(); },
+      actual(cb){ cb(lsGet('yp_sesion', null)); }
+    },
+    menu(cb){ const f = () => cb(getM()); subsM.push(f); f(); },
+    guardarMenu(m){ lsSet('yp_menu', m); fireM(); avisar('yp_menu'); return Promise.resolve(); },
+    conexion(cb){ cb(true); }
+  };
+}
+
+function cargarScript(src){
+  return new Promise((ok, fail) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = () => fail(new Error('No se pudo cargar ' + src));
+    document.head.appendChild(s);
+  });
+}
+async function crearFirebase(cfg){
+  const base = 'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/';
+  await cargarScript(base + 'firebase-app-compat.min.js');
+  await cargarScript(base + 'firebase-database-compat.min.js');
+  await cargarScript(base + 'firebase-auth-compat.min.js');
+  firebase.initializeApp(cfg);
+  const db = firebase.database();
+  return {
+    mode: 'firebase',
+    async enviar(p){
+      const tr = await db.ref('contador/' + p.fecha).transaction(n => (n || 0) + 1);
+      p.numero = tr.snapshot.val();
+      const ref = db.ref('pedidos').push();
+      p.id = ref.key;
+      await ref.set(p);
+      return p;
+    },
+    pedidos(fecha, cb){ db.ref('pedidos').orderByChild('fecha').equalTo(fecha).on('value', s => cb(s.val() || {})); },
+    pedido(id, cb){ const r = db.ref('pedidos/' + id); const h = r.on('value', s => cb(s.val())); return () => r.off('value', h); },
+    estado(id, e){ const u = { estado: e }; u['t_' + e] = Date.now(); return db.ref('pedidos/' + id).update(u); },
+    pagar(id){ return db.ref('pedidos/' + id).update({ pagado: true, t_pagado: Date.now() }); },
+    auth: {
+      async registrar(nombre, email, pass){
+        const c = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+        try { await c.user.updateProfile({ displayName: nombre }); } catch(e){}
+        return { uid: c.user.uid, nombre: nombre, email: email };
+      },
+      async entrar(email, pass){
+        const c = await firebase.auth().signInWithEmailAndPassword(email, pass);
+        return { uid: c.user.uid, nombre: c.user.displayName || email, email: email };
+      },
+      salir(){ return firebase.auth().signOut(); },
+      actual(cb){ firebase.auth().onAuthStateChanged(u => cb(u ? { uid: u.uid, nombre: u.displayName || u.email, email: u.email } : null)); }
+    },
+    menu(cb){ db.ref('menu').on('value', s => cb(s.val() || {})); },
+    guardarMenu(m){ return db.ref('menu').set(m); },
+    conexion(cb){ db.ref('.info/connected').on('value', s => cb(!!s.val())); }
+  };
+}
+
+async function hashPass(pass, salt){
+  try {
+    if (window.crypto && crypto.subtle) {
+      const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + ':' + pass));
+      return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
+    }
+  } catch(e){}
+  let h = 5381; const t = salt + ':' + pass;
+  for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0;
+  return 'x' + h;
+}
+function errAuth(e){
+  const c = (e && e.code) || '';
+  if (c === 'email-en-uso' || c === 'auth/email-already-in-use') return 'Ya existe una cuenta con ese correo. Prueba ingresar.';
+  if (c === 'credenciales' || c === 'auth/invalid-credential' || c === 'auth/wrong-password' || c === 'auth/user-not-found' || c === 'auth/invalid-login-credentials') return 'Correo o contraseña incorrectos.';
+  if (c === 'auth/weak-password') return 'La contraseña debe tener al menos 6 caracteres.';
+  if (c === 'auth/invalid-email') return 'Escribe un correo válido.';
+  if (c === 'auth/network-request-failed') return 'Sin conexión. Revisa tu internet e intenta otra vez.';
+  if (c === 'auth/operation-not-allowed') return 'El ingreso con correo no está activado.';
+  return 'No se pudo completar. Intenta de nuevo.';
+}
+
+let DB = null, firebaseFallo = false, conectado = true;
+async function iniciarDB(){
+  if (CONFIG.firebase) {
+    try { DB = await crearFirebase(CONFIG.firebase); }
+    catch(e){ console.error(e); firebaseFallo = true; DB = crearDemo(); }
+  } else { DB = crearDemo(); }
+}
+
+/* =====================================================================
+   ESTADO DEL CLIENTE
+   ===================================================================== */
+const state = { modalidad: 'mesa', mesa: '', nombre: '', base: null, cant: {}, beb: {}, nota: '', pago: 'qr', huevos: 1 };
+CONFIG.porciones.forEach(p => { state.cant[p.id] = 1; });
+let off = {};
+let miPedido = null, unsubMiPedido = null, estadoPrevio = null;
+let sending = false, view = 'inicio', user = null, destino = null, modoAuth = 'entrar';
+const VIEWS = ['inicio', 'cuenta', 'pedido', 'pago', 'mipedido', 'qr'];
+
+const disp = id => off[id] !== false;
+const precioBase = b => (b && b.precio != null) ? b.precio : 0;
+
+function asegurarBase(){
+  const ok = CONFIG.bases.find(b => b.id === state.base && disp(b.id));
+  if (!ok) { const first = CONFIG.bases.find(b => disp(b.id)); state.base = first ? first.id : null; }
+}
+
+/* ---------- cálculo ---------- */
+function borrador(){
+  const b = CONFIG.bases.find(x => x.id === state.base);
+  const baseO = b ? { id: b.id, nombre: b.nombre, precio: precioBase(b) } : null;
+  const porciones = CONFIG.porciones.filter(p => disp(p.id)).map(p => {
+    const c = state.cant[p.id];
+    return { id: p.id, nombre: p.nombre, cant: c, extra: Math.max(0, c - 1) * p.precio };
+  });
+  const bebidas = CONFIG.bebidas.filter(x => disp(x.id) && (state.beb[x.id] || 0) > 0).map(x => ({
+    id: x.id, nombre: x.nombre, cant: state.beb[x.id], precio: x.precio * state.beb[x.id]
+  }));
+  const hc = b && b.huevos ? b.huevos : null;
+  const huevos = hc ? { cant: state.huevos, extra: Math.max(0, state.huevos - hc.incluidos) * hc.precio } : null;
+  const total = (baseO ? baseO.precio : 0) + porciones.reduce((s, p) => s + p.extra, 0) + bebidas.reduce((s, x) => s + x.precio, 0) + (huevos ? huevos.extra : 0);
+  return {
+    modalidad: state.modalidad,
+    mesa: state.modalidad === 'mesa' ? (state.mesa || null) : null,
+    nombre: state.nombre.trim() || null,
+    base: baseO, porciones, bebidas, huevos,
+    nota: state.nota.trim() || null,
+    total
+  };
+}
+
+function donde(p){
+  const quien = p.nombre ? ' · ' + esc(p.nombre) : '';
+  return p.modalidad === 'llevar' ? 'Para llevar' + quien : (p.mesa ? 'Mesa ' + esc(p.mesa) : 'Mesa sin elegir') + quien;
+}
+
+function lineasHTML(p){
+  let h = '';
+  if (p.base) h += `<div class="t-row"><span>Base: <b>${esc(p.base.nombre)}</b></span><b>${money(p.base.precio)} Bs.</b></div>`;
+  if (p.huevos) h += p.huevos.cant === 0
+    ? '<div class="t-row is-dim"><span>Sin huevo</span><span>—</span></div>'
+    : `<div class="t-row is-dim"><span>Huevos estrellados (Cant: ${p.huevos.cant})</span><span>${p.huevos.extra > 0 ? money(p.huevos.extra) + ' Bs.' : 'incluido'}</span></div>`;
+  (p.porciones || []).forEach(x => {
+    if (x.cant === 0) h += `<div class="t-row is-dim"><span>Sin ${esc(x.nombre.toLowerCase())}</span><span>—</span></div>`;
+    else h += `<div class="t-row is-dim"><span>${esc(x.nombre)} (Cant: ${x.cant})</span><span>${x.extra > 0 ? money(x.extra) + ' Bs.' : 'incluido'}</span></div>`;
+  });
+  (p.bebidas || []).forEach(x => {
+    h += `<div class="t-row is-dim"><span>${esc(x.nombre)} (Cant: ${x.cant})</span><span>${money(x.precio)} Bs.</span></div>`;
+  });
+  return h;
+}
+
+function ticketHTML(p, opt){
+  opt = opt || {};
+  return `<div class="ticket">
+    <div><h2>Comanda Digital</h2><p class="t-sub">Cálculo de porciones limitado en tiempo real</p></div>
+    <div class="t-meta"><span>${donde(p)}</span>${p.numero ? '<span>Nº ' + pad(p.numero) + '</span>' : ''}${p.pago ? '<span>Pago: ' + (p.pago.metodo === 'qr' ? 'QR' : 'efectivo') + (p.pagado ? ' (confirmado)' : '') + '</span>' : ''}</div>
+    <div class="t-lines">${lineasHTML(p) || '<p class="t-sub">Elige una base para empezar.</p>'}</div>
+    ${p.nota ? `<p class="t-sub">Observación: ${esc(p.nota)}</p>` : ''}
+    <div class="t-total"><span>TOTAL ESTIMADO</span><b>${money(p.total)} Bs.</b></div>
+    ${opt.boton ? '<button type="button" class="btn btn-primary btn-block only-desktop" data-act="confirmar">CONFIRMAR MI PLATO</button><p class="t-foot only-desktop">Transmisión directa a cocina (KDS)</p>' : ''}
+  </div>`;
+}
+
+/* ---------- render del armado ---------- */
+function renderBases(){
+  asegurarBase();
+  $('#base-list').innerHTML = CONFIG.bases.map(b => {
+    const agot = !disp(b.id), sel = state.base === b.id;
+    return `<label class="choice${sel ? ' is-sel' : ''}${agot ? ' is-off' : ''}"><input type="radio" name="base" value="${esc(b.id)}" ${sel ? 'checked' : ''} ${agot ? 'disabled' : ''}>
+      <span class="c-name">${esc(b.nombre)}</span><span class="c-sub">${agot ? 'Agotado hoy' : esc(b.detalle || '')}</span><span class="c-price">${money(precioBase(b))} Bs.</span></label>`;
+  }).join('');
+}
+function renderPorciones(){
+  const bb = CONFIG.bases.find(x => x.id === state.base);
+  const hue = (bb && bb.huevos) ? rowHTML('hue', 'huevos', 'Huevos estrellados') : '';
+  const list = CONFIG.porciones.filter(p => disp(p.id));
+  $('#por-list').innerHTML = hue + list.map(p => rowHTML('por', p.id, p.nombre)).join('') || '<p class="hint">Hoy no hay porciones disponibles.</p>';
+}
+function renderBebidas(){
+  const list = CONFIG.bebidas.filter(b => disp(b.id));
+  $('#beb-list').innerHTML = list.map(b => rowHTML('beb', b.id, b.nombre)).join('') || '<p class="hint">Hoy no hay bebidas disponibles.</p>';
+}
+function rowHTML(kind, id, nombre){
+  return `<div class="row" data-kind="${kind}" data-id="${esc(id)}"><div class="r-txt"><b>${esc(nombre)}</b><span class="r-hint" data-hint></span></div>
+    <div class="step"><button type="button" class="s-btn" data-act="dec" aria-label="Quitar ${esc(nombre)}">−</button><output class="s-val" data-val>0</output><button type="button" class="s-btn" data-act="inc" aria-label="Agregar ${esc(nombre)}">+</button></div></div>`;
+}
+function refrescar(){
+  $$('#por-list .row').forEach(r => {
+    if (r.dataset.kind === 'hue') {
+      const hb = CONFIG.bases.find(x => x.id === state.base), hc = hb && hb.huevos, hn = state.huevos;
+      if (!hc) return;
+      $('[data-val]', r).textContent = hn;
+      $('[data-hint]', r).textContent = hn === 0 ? 'Sin huevo'
+        : hn <= hc.incluidos ? (hn + (hn === 1 ? ' incluido' : ' incluidos'))
+        : (hc.precio > 0 ? '+' + money((hn - hc.incluidos) * hc.precio) + ' Bs. (' + (hn - hc.incluidos) + (hn - hc.incluidos === 1 ? ' adicional)' : ' adicionales)') : 'Sin costo extra');
+      $('[data-act="dec"]', r).disabled = hn <= 0;
+      $('[data-act="inc"]', r).disabled = hn >= hc.max;
+      return;
+    }
+    const p = CONFIG.porciones.find(x => x.id === r.dataset.id); const c = state.cant[p.id];
+    $('[data-val]', r).textContent = c;
+    $('[data-hint]', r).textContent = c === 0 ? 'Sin ' + p.nombre.toLowerCase() : c === 1 ? 'Incluida en la base' : '+' + money((c - 1) * p.precio) + ' Bs. (' + (c - 1) + (c - 1 === 1 ? ' adicional)' : ' adicionales)');
+    $('[data-act="dec"]', r).disabled = c <= 0;
+    $('[data-act="inc"]', r).disabled = c >= p.max;
+  });
+  $$('#beb-list .row').forEach(r => {
+    const b = CONFIG.bebidas.find(x => x.id === r.dataset.id); const c = state.beb[b.id] || 0;
+    $('[data-val]', r).textContent = c;
+    $('[data-hint]', r).textContent = c === 0 ? money(b.precio) + ' Bs. c/u' : money(b.precio * c) + ' Bs.';
+    $('[data-act="dec"]', r).disabled = c <= 0;
+    $('[data-act="inc"]', r).disabled = c >= 6;
+  });
+  const p = borrador();
+  $('#ticket').innerHTML = ticketHTML(p, { boton: true });
+  $('#bar-total').textContent = money(p.total) + ' Bs.';
+}
+function syncCampos(){
+  $$('input[name="modalidad"]').forEach(r => { r.checked = r.value === state.modalidad; });
+  $('#m-mesa').classList.toggle('is-sel', state.modalidad === 'mesa');
+  $('#m-llevar').classList.toggle('is-sel', state.modalidad === 'llevar');
+  $('#f-mesa').hidden = state.modalidad !== 'mesa';
+  $('#mesa').value = state.mesa || '';
+  $('#nombre').value = state.nombre;
+  $('#l-nombre').textContent = state.modalidad === 'llevar' ? 'Tu nombre (para llamarte)' : 'Tu nombre (opcional)';
+  const chip = $('#h-mesa');
+  if (state.modalidad === 'mesa' && state.mesa) { chip.hidden = false; chip.textContent = 'Estás en la mesa ' + state.mesa; }
+  else if (state.modalidad === 'llevar') { chip.hidden = false; chip.textContent = 'Pedido para llevar'; }
+  else chip.hidden = true;
+}
+function validar(){
+  if (!state.base) return 'Elige una base para tu plato.';
+  if (state.modalidad === 'mesa' && !state.mesa) return 'Elige tu número de mesa.';
+  if (state.modalidad === 'llevar' && !state.nombre.trim()) return 'Escribe tu nombre para llamarte cuando tu pedido esté listo.';
+  return '';
+}
+function showError(msg){
+  const e = $('#form-error');
+  e.textContent = msg; e.hidden = false;
+  try { e.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch(x){}
+  toast(msg, true);
+}
+function limpiarError(){ $('#form-error').hidden = true; }
+
+let tt;
+function toast(msg, bad){
+  const t = $('#toast');
+  t.textContent = msg; t.className = 'toast' + (bad ? ' bad' : ''); t.hidden = false;
+  clearTimeout(tt); tt = setTimeout(() => { t.hidden = true; }, 3800);
+}
+function vibrar(p){ try { if (navigator.vibrate) navigator.vibrate(p); } catch(e){} }
+
+/* ---------- envío (ENLAZADO DIRECTO CON COCINA) ---------- */
+async function enviar(){
+  if (sending) return;
+  const err = validar();
+  if (err) { showError(err); go('pedido'); return; }
+  if (!user) { go('cuenta'); return; }
+  if (DB.mode === 'firebase' && !conectado) { toast('Sin conexión. Intenta de nuevo cuando vuelva internet.', true); return; }
+  sending = true;
+  const btn = $('#btn-enviar'); btn.disabled = true; btn.textContent = 'Enviando…';
+  try {
+    const p = Object.assign(borrador(), { fecha: hoy(), creado: Date.now(), estado: 'nuevo', pago: { metodo: state.pago }, pagado: false, uid: user.uid, cliente: user.nombre });
+    const guardado = await DB.enviar(p);
+
+    // Sincronización directa con el receptor de la cocina (localStorage + BroadcastChannel)
+    try {
+      let todos = lsGet('yp_pedidos', {});
+      todos[guardado.id] = guardado;
+      lsSet('yp_pedidos', todos);
+
+      window.dispatchEvent(new CustomEvent('yp-sync', { detail: { k: 'yp_pedidos' } }));
+      const canal = new BroadcastChannel('yopido');
+      canal.postMessage({ k: 'yp_pedidos' });
+    } catch(errSync){
+      console.warn('Sincronización local secundario:', errSync);
+    }
+
+    lsSet('yp_ultimo_' + user.uid, guardado.id);
+    escucharMiPedido(guardado.id);
+    go('mipedido');
+    toast('Pedido enviado a la cocina');
+  } catch(e){
+    console.error(e);
+    toast('No se pudo enviar el pedido. Revisa tu conexión e intenta otra vez.', true);
+  } finally { sending = false; btn.disabled = false; renderPago(); }
+}
+
+/* ---------- pago ---------- */
+function renderPago(){
+  const p = borrador();
+  $('#pago-aviso').innerHTML = avisoDemo();
+  $('#pago-sub').textContent = donde(p) + ' · Total ' + money(p.total) + ' Bs.';
+  $('#pago-ticket').innerHTML = ticketHTML(p, {});
+  $$('input[name="pago"]').forEach(r => { r.checked = r.value === state.pago; });
+  $('#p-qr').classList.toggle('is-sel', state.pago === 'qr');
+  $('#p-efectivo').classList.toggle('is-sel', state.pago === 'efectivo');
+  const d = $('#pago-detalle');
+  if (state.pago === 'qr') {
+    const img = CONFIG.pagoQR ? `<img src="${esc(CONFIG.pagoQR)}" alt="QR de pago de la pensión" width="220" height="220">` : '';
+    d.innerHTML = `<div class="pago-box"><div class="qr-box" id="pago-qr">${img}</div><div class="pago-txt"><p><b>Paga ${money(p.total)} Bs.</b></p>
+      <ol><li>Abre la app de tu banco y escanea este QR.</li><li>Paga exactamente ${money(p.total)} Bs.</li><li>Cuando termines, toca «Ya pagué, enviar a cocina».</li></ol>
+      <p class="hint">La cocina verificará tu pago antes de entregarte el plato.</p>
+      </div></div>`;
+    if (!CONFIG.pagoQR && typeof QRCode !== 'undefined') new QRCode($('#pago-qr'), { text: 'YO PIDO+ | ' + money(p.total) + ' Bs.', width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+    $('#btn-enviar').textContent = 'Ya pagué, enviar a cocina';
+  } else {
+    d.innerHTML = `<div class="pago-box"><div class="pago-txt"><p><b>Pagas ${money(p.total)} Bs. en efectivo</b></p><p>Cuando te entreguen tu plato, paga en caja o a quien te atienda. Si necesitas cambio, ten el monto a la mano.</p></div></div>`;
+    $('#btn-enviar').textContent = 'Enviar a cocina (pago en efectivo)';
+  }
+}
+
+function avisoDemo(){
+  return '';
+}
+
+function pagoNota(p){
+  if (!p.pago) return '';
+  if (p.pagado) return '<p class="msg ok">Pago confirmado. Gracias.</p>';
+  if (p.pago.metodo === 'qr') return '<p class="note">Pagaste por QR. La cocina verificará tu pago.</p>';
+  return '<p class="note">Pagas ' + money(p.total) + ' Bs. en efectivo cuando te entreguen tu plato.</p>';
+}
+
+/* ---------- cuenta ---------- */
+function renderAuth(){
+  const crear = modoAuth === 'crear';
+  $('#auth-titulo').textContent = crear ? 'Crear cuenta' : 'Ingresar';
+  $('#auth-sub').textContent = crear ? 'Solo necesitas tu nombre, un correo y una contraseña.' : (destino ? 'Ingresa para armar y seguir tus pedidos.' : 'Ingresa con tu cuenta para hacer tu pedido.');
+  $('#a-nombre-f').hidden = !crear;
+  $('#a-submit').textContent = crear ? 'Crear cuenta' : 'Ingresar';
+  $('#a-pass').setAttribute('autocomplete', crear ? 'new-password' : 'current-password');
+  $('#a-cambio-txt').textContent = crear ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?';
+  $('#a-cambio').textContent = crear ? 'Ingresar' : 'Crear cuenta';
+  $$('[data-authtab]').forEach(b => b.setAttribute('aria-pressed', b.dataset.authtab === modoAuth ? 'true' : 'false'));
+  $('#a-error').hidden = true;
+}
+async function enviarAuth(e){
+  e.preventDefault();
+  const err = $('#a-error'); err.hidden = true;
+  const crear = modoAuth === 'crear';
+  const email = $('#a-email').value.trim().toLowerCase(), pass = $('#a-pass').value, nombre = $('#a-nombre').value.trim();
+  let msg = '';
+  if (crear && nombre.length < 2) msg = 'Escribe tu nombre.';
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) msg = 'Escribe un correo válido.';
+  else if (pass.length < 6) msg = 'La contraseña debe tener al menos 6 caracteres.';
+  if (msg) { err.textContent = msg; err.hidden = false; return; }
+  const btn = $('#a-submit'); btn.disabled = true;
+  try {
+    const u = crear ? await DB.auth.registrar(nombre, email, pass) : await DB.auth.entrar(email, pass);
+    $('#a-pass').value = '';
+    aplicarUsuario(u);
+    toast('Hola, ' + String(u.nombre).split(' ')[0]);
+  } catch(x){ err.textContent = errAuth(x); err.hidden = false; }
+  finally { btn.disabled = false; }
+}
+function aplicarUsuario(u){
+  const igual = !!(user && u && user.uid === u.uid);
+  user = u || null;
+  $('#user').hidden = !user; $('#user-guest').hidden = !!user;
+  $('#user-name').textContent = user ? user.nombre : '';
+  $('#cta-guest').hidden = !!user; $('#cta-user').hidden = !user;
+  if (igual) return;
+  if (unsubMiPedido) { try { unsubMiPedido(); } catch(e){} unsubMiPedido = null; }
+  miPedido = null; estadoPrevio = null; $('#dot').hidden = true;
+  if (user) {
+    if (!state.nombre) { state.nombre = user.nombre; syncCampos(); }
+    const ult = lsGet('yp_ultimo_' + user.uid, null);
+    if (ult) escucharMiPedido(ult);
+    if (view === 'cuenta') { const d = destino || 'pedido'; destino = null; go(d); }
+  } else {
+    state.nombre = ''; syncCampos();
+    if (view === 'pedido' || view === 'mipedido' || view === 'pago') go('inicio');
+  }
+  if (view === 'mipedido') renderMiPedido();
+}
+
+/* ---------- mi pedido ---------- */
+function escucharMiPedido(id){
+  if (unsubMiPedido) { try { unsubMiPedido(); } catch(e){} }
+  estadoPrevio = null;
+  unsubMiPedido = DB.pedido(id, p => {
+    miPedido = p || null;
+    if (p && estadoPrevio && estadoPrevio !== p.estado && p.estado === 'listo') { toast('¡Tu pedido está listo!'); vibrar([200, 100, 200]); }
+    estadoPrevio = p ? p.estado : null;
+    $('#dot').hidden = !p || p.estado === 'entregado';
+    renderMiPedido();
+  });
+}
+function renderMiPedido(){
+  const el = $('#mp'), p = miPedido;
+  if (!p) {
+    el.innerHTML = `<div class="empty"><h1 class="h1">Mi pedido</h1><p>Aún no tienes un pedido en curso. Arma tu plato y envíalo a la cocina; aquí verás en qué paso va.</p><button class="btn btn-primary" type="button" data-act="ir-pedido">Armar mi plato</button></div>`;
+    return;
+  }
+  const idx = { nuevo: 0, preparando: 1, listo: 2, entregado: 3 }[p.estado];
+  const pasos = [
+    ['Pedido recibido', 'La cocina ya tiene tu comanda.'],
+    ['En preparación', 'Estamos armando tu plato.'],
+    ['Listo para servir', 'Tu plato está listo.']
+  ];
+  el.innerHTML = `<div class="mp-head"><div><p class="eyebrow">Tu pedido</p><h1 class="mp-num">Nº ${pad(p.numero)}</h1></div><p class="mp-donde">${donde(p)} · ${hora(p.creado)}</p></div>
+    <ol class="pasos">${pasos.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}" ${i === idx ? 'aria-current="step"' : ''}><span class="p-mark">${i < idx ? '✓' : i + 1}</span><div><b>${s[0]}</b><span>${i === idx ? s[1] : (i < idx ? 'Hecho' : '')}</span></div></li>`).join('')}</ol>
+    ${pagoNota(p)}
+    ${avisoDemo()}
+    ${idx === 3 ? '<p class="msg ok">Pedido entregado. ¡Buen provecho!</p>' : ''}
+    ${ticketHTML(p, {})}
+    <button class="btn btn-ghost" type="button" data-act="otro">Hacer otro pedido</button>`;
+}
+
+/* =====================================================================
+   QR
+   ===================================================================== */
+const baseURL = () => location.href.split('#')[0].split('?')[0];
+function renderQR(){
+  const grid = $('#qr-grid');
+  const url = ($('#qr-url').value.trim() || baseURL()).split('#')[0];
+  const n = clamp(parseInt($('#qr-n').value, 10) || CONFIG.mesas, 1, 60);
+  grid.innerHTML = '';
+  if (typeof QRCode === 'undefined') { grid.innerHTML = '<p class="note">No se pudo cargar la librería de QR. Revisa tu conexión a internet.</p>'; return; }
+  const items = [];
+  for (let i = 1; i <= n; i++) items.push({ t: 'Mesa ' + i, link: url + '#mesa-' + i });
+  items.push({ t: 'Para llevar', link: url + '#llevar' });
+  items.forEach(it => {
+    const card = document.createElement('article');
+    card.className = 'qr-card';
+    card.innerHTML = `<div class="qr-box"></div><h3>${esc(it.t)}</h3><p class="qr-slogan">Escanea, arma tu plato y pide sin esperar</p><p class="qr-link">${esc(it.link)}</p><button type="button" class="btn btn-ghost no-print" data-act="copiar" data-link="${esc(it.link)}">Copiar enlace</button>`;
+    grid.appendChild(card);
+    new QRCode($('.qr-box', card), { text: it.link, width: 176, height: 176, correctLevel: QRCode.CorrectLevel.M });
+  });
+}
+
+/* =====================================================================
+   NAVEGACIÓN
+   ===================================================================== */
+function go(v, push){
+  if (VIEWS.indexOf(v) < 0) v = 'inicio';
+  if ((v === 'pedido' || v === 'mipedido' || v === 'pago') && !user) { destino = v === 'pago' ? 'pedido' : v; modoAuth = 'entrar'; v = 'cuenta'; }
+  else if (v === 'cuenta' && user) v = 'pedido';
+  else if (v === 'pago' && validar()) { showError(validar()); v = 'pedido'; }
+  view = v;
+  VIEWS.forEach(n => { $('#v-' + n).hidden = n !== v; });
+  document.body.dataset.view = v;
+  $$('.tabs a').forEach(a => { if (a.dataset.nav === (v === 'pago' ? 'pedido' : v)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  if (push !== false) { try { location.hash = v; } catch(e){} }
+  try { window.scrollTo(0, 0); } catch(e){}
+  if (v === 'qr') { if (!$('#qr-url').value) $('#qr-url').value = baseURL(); renderQR(); }
+  if (v === 'pedido') { syncCampos(); refrescar(); }
+  if (v === 'mipedido') renderMiPedido();
+  if (v === 'cuenta') renderAuth();
+  if (v === 'pago') renderPago();
+}
+function leerHash(){
+  const h = (location.hash || '').slice(1);
+  let m = /^mesa-(\d{1,3})$/.exec(h);
+  if (m && +m[1] >= 1 && +m[1] <= CONFIG.mesas) { state.mesa = m[1]; state.modalidad = 'mesa'; ssSet('yp_mesa', m[1]); syncCampos(); return 'inicio'; }
+  if (h === 'llevar') { state.modalidad = 'llevar'; syncCampos(); return 'inicio'; }
+  return VIEWS.indexOf(h) >= 0 ? h : 'inicio';
+}
+
+/* =====================================================================
+   EVENTOS
+   ===================================================================== */
+document.addEventListener('click', e => {
+  const nav = e.target.closest('a[data-nav]');
+  if (nav) { e.preventDefault(); go(nav.dataset.nav); return; }
+  const at = e.target.closest('[data-authtab]');
+  if (at) { modoAuth = at.dataset.authtab; renderAuth(); return; }
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const act = b.dataset.act;
+  if (act === 'ir-pedido') go('pedido');
+  else if (act === 'inc' || act === 'dec') {
+    const row = b.closest('.row'); if (!row) return;
+    const d = act === 'inc' ? 1 : -1, id = row.dataset.id;
+    if (row.dataset.kind === 'hue') { const hb = CONFIG.bases.find(x => x.id === state.base); state.huevos = clamp(state.huevos + d, 0, hb && hb.huevos ? hb.huevos.max : 0); }
+    else if (row.dataset.kind === 'por') { const p = CONFIG.porciones.find(x => x.id === id); state.cant[id] = clamp((state.cant[id] || 0) + d, 0, p.max); }
+    else { state.beb[id] = clamp((state.beb[id] || 0) + d, 0, 6); }
+    limpiarError(); refrescar();
+  }
+  else if (act === 'confirmar') { const err = validar(); if (err) showError(err); else go('pago'); }
+  else if (act === 'enviar') enviar();
+  else if (act === 'volver-editar') go('pedido');
+  else if (act === 'ir-cuenta') { modoAuth = b.dataset.modo || 'entrar'; go('cuenta'); }
+  else if (act === 'auth-cambiar') { modoAuth = modoAuth === 'crear' ? 'entrar' : 'crear'; renderAuth(); }
+  else if (act === 'salir') { Promise.resolve(DB.auth.salir()).catch(() => {}).then(() => { aplicarUsuario(null); go('inicio'); toast('Cerraste tu sesión'); }); }
+  else if (act === 'otro') {
+    if (user) lsDel('yp_ultimo_' + user.uid); miPedido = null; estadoPrevio = null;
+    if (unsubMiPedido) { try { unsubMiPedido(); } catch(x){} unsubMiPedido = null; }
+    $('#dot').hidden = true;
+    CONFIG.porciones.forEach(p => { state.cant[p.id] = 1; }); state.beb = {}; state.huevos = 1; state.nota = ''; $('#nota').value = '';
+    renderBases(); renderPorciones(); renderBebidas(); go('pedido');
+  }
+  else if (act === 'copiar') {
+    const link = b.dataset.link;
+    try { navigator.clipboard.writeText(link).then(() => toast('Enlace copiado'), () => toast('No se pudo copiar. Selecciona el enlace que aparece bajo el QR.', true)); }
+    catch(x){ toast('No se pudo copiar. Selecciona el enlace que aparece bajo el QR.', true); }
+  }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.name === 'pago') { state.pago = t.value; renderPago(); }
+  else if (t.name === 'modalidad') { state.modalidad = t.value; limpiarError(); syncCampos(); refrescar(); }
+  else if (t.name === 'base') {
+    state.base = t.value; limpiarError();
+    $$('#base-list .choice').forEach(c => c.classList.toggle('is-sel', $('input', c).checked));
+    renderPorciones(); refrescar();
+  }
+  else if (t.id === 'mesa') { state.mesa = t.value; ssSet('yp_mesa', t.value); limpiarError(); syncCampos(); refrescar(); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'nombre') { state.nombre = t.value; limpiarError(); refrescar(); }
+  else if (t.id === 'nota') { state.nota = t.value; refrescar(); }
+});
+window.addEventListener('hashchange', () => { const v = leerHash(); if (v !== view) go(v, false); });
+let qrT; ['#qr-url', '#qr-n'].forEach(s => $(s).addEventListener('input', () => { clearTimeout(qrT); qrT = setTimeout(renderQR, 300); }));
+$('#form-auth').addEventListener('submit', enviarAuth);
+window.addEventListener('offline', () => { if (DB && DB.mode === 'firebase') { conectado = false; $('#offline').hidden = false; } });
+window.addEventListener('online', () => { if (DB && DB.mode === 'firebase') { conectado = true; $('#offline').hidden = true; } });
+
+/* =====================================================================
+   ARRANQUE
+   ===================================================================== */
+function onMenu(){
+  renderBases(); renderPorciones(); renderBebidas(); refrescar();
+}
+async function boot(){
+  $('#h-negocio').textContent = CONFIG.negocio.split('·')[0].trim();
+  $('#f-negocio').textContent = CONFIG.negocio;
+  $('#qr-n').value = CONFIG.mesas;
+  $('#lead-precios').textContent = 'Cada plato incluye 1 porción de cada acompañamiento. Porción adicional: ' + CONFIG.porciones.map(p => p.nombre.toLowerCase() + ' ' + money(p.precio) + ' Bs.').join(', ') + '.';
+  $('#hint-porciones').textContent = 'Usa + y − para pedir más o menos. Puedes quitar una porción si no la quieres.';
+  $('#mesa').innerHTML = '<option value="">Elige tu mesa</option>' + Array.from({ length: CONFIG.mesas }, (_, i) => `<option value="${i + 1}">Mesa ${i + 1}</option>`).join('');
+  const q = new URLSearchParams(location.search);
+  state.mesa = q.get('mesa') || ssGet('yp_mesa') || '';
+  if (state.mesa && !$('#mesa option[value="' + state.mesa + '"]')) state.mesa = '';
+  asegurarBase(); renderBases(); renderPorciones(); renderBebidas(); syncCampos(); refrescar();
+
+  await iniciarDB();
+  $('#demo-note').textContent = ''; $('#demo-note').hidden = true;
+  DB.conexion(ok => { conectado = ok; $('#offline').hidden = ok || DB.mode !== 'firebase'; });
+  DB.menu(m => { off = m || {}; onMenu(); });
+  DB.auth.actual(aplicarUsuario);
+  go(leerHash(), false);
+}
+boot();
+})();
+</script>
+</body>
+</html>
